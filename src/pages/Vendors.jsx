@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '../utils';
+
 import { 
   ArrowLeft, Plus, Search, Phone, Mail, Globe, FileText, 
   DollarSign, MoreHorizontal, Pencil, Trash2, CheckCircle2, Clock 
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
+import { Skeleton } from '../components/ui/skeleton';
 
 const categories = [
   { value: 'photographer', label: 'Photographer' },
@@ -72,29 +72,29 @@ export default function Vendors() {
   });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
 
-  const loadData = async () => {
-    try {
-      const [weddings, allVendors] = await Promise.all([
-        base44.entities.Wedding.list('-created_date', 1),
-        base44.entities.Vendor.list('-created_date', 100),
-      ]);
+  // const loadData = async () => {
+  //   try {
+  //     const [weddings, allVendors] = await Promise.all([
+  //       base44.entities.Wedding.list('-created_date', 1),
+  //       base44.entities.Vendor.list('-created_date', 100),
+  //     ]);
 
-      const activeWedding = weddings[0];
-      setWedding(activeWedding);
+  //     const activeWedding = weddings[0];
+  //     setWedding(activeWedding);
 
-      if (activeWedding) {
-        setVendors(allVendors.filter(v => v.wedding_id === activeWedding.id));
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (activeWedding) {
+  //       setVendors(allVendors.filter(v => v.wedding_id === activeWedding.id));
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to load data:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const filteredVendors = vendors.filter(v => {
     const matchesSearch = v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -138,50 +138,50 @@ export default function Vendors() {
     setModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name.trim() || !formData.category) return;
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.name.trim() || !formData.category) return;
 
-    setSaving(true);
-    try {
-      const data = {
-        ...formData,
-        wedding_id: wedding.id,
-        total_cost: formData.total_cost ? parseFloat(formData.total_cost) : null,
-        amount_paid: formData.amount_paid ? parseFloat(formData.amount_paid) : null,
-      };
+  //   setSaving(true);
+  //   try {
+  //     const data = {
+  //       ...formData,
+  //       wedding_id: wedding.id,
+  //       total_cost: formData.total_cost ? parseFloat(formData.total_cost) : null,
+  //       amount_paid: formData.amount_paid ? parseFloat(formData.amount_paid) : null,
+  //     };
 
-      if (selectedVendor) {
-        await base44.entities.Vendor.update(selectedVendor.id, data);
-        setVendors(prev => prev.map(v => v.id === selectedVendor.id ? { ...v, ...data } : v));
-      } else {
-        const newVendor = await base44.entities.Vendor.create(data);
-        setVendors(prev => [...prev, newVendor]);
-      }
+  //     if (selectedVendor) {
+  //       await base44.entities.Vendor.update(selectedVendor.id, data);
+  //       setVendors(prev => prev.map(v => v.id === selectedVendor.id ? { ...v, ...data } : v));
+  //     } else {
+  //       const newVendor = await base44.entities.Vendor.create(data);
+  //       setVendors(prev => [...prev, newVendor]);
+  //     }
 
-      setModalOpen(false);
-    } catch (error) {
-      console.error('Failed to save vendor:', error);
-    } finally {
-      setSaving(false);
-    }
-  };
+  //     setModalOpen(false);
+  //   } catch (error) {
+  //     console.error('Failed to save vendor:', error);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  const handleDelete = async (vendor) => {
-    if (!window.confirm('Are you sure you want to delete this vendor?')) return;
+  // const handleDelete = async (vendor) => {
+  //   if (!window.confirm('Are you sure you want to delete this vendor?')) return;
     
-    try {
-      await base44.entities.Vendor.delete(vendor.id);
-      setVendors(prev => prev.filter(v => v.id !== vendor.id));
-    } catch (error) {
-      console.error('Failed to delete vendor:', error);
-    }
-  };
+  //   try {
+  //     await base44.entities.Vendor.delete(vendor.id);
+  //     setVendors(prev => prev.filter(v => v.id !== vendor.id));
+  //   } catch (error) {
+  //     console.error('Failed to delete vendor:', error);
+  //   }
+  // };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'ZAR',
       minimumFractionDigits: 0,
     }).format(amount || 0);
   };

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+
 import { DragDropContext } from '@hello-pangea/dnd';
 import {
   Heart, Plus, Search, LayoutGrid, DollarSign, Users, UserCheck,
@@ -9,21 +9,21 @@ import {
   Globe, FileText, MoreHorizontal, Pencil, Trash2, AlertTriangle,
   Clock, UserX, Filter
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import BoardColumn from '@/components/board/BoardColumn';
-import TaskFormModal from '@/components/board/TaskFormModal';
-import TaskDetailModal from '@/components/board/TaskDetailModal';
-import WorkspaceBudgetPanel from '@/components/workspace/WorkspaceBudgetPanel';
-import WorkspaceVendorPanel from '@/components/workspace/WorkspaceVendorPanel';
-import WorkspaceGuestPanel from '@/components/workspace/WorkspaceGuestPanel';
-import WorkspaceTimelinePanel from '@/components/workspace/WorkspaceTimelinePanel';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Badge } from '../components/ui/badge';
+import { Progress } from '../components/ui/progress';
+import { Skeleton } from '../components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
+import BoardColumn from '../components/board/BoardColumn';
+import TaskFormModal from '../components/board/TaskFormModal';
+import TaskDetailModal from '../components/board/TaskDetailModal';
+import WorkspaceBudgetPanel from '../components/workspace/WorkspaceBudgetPanel';
+import WorkspaceVendorPanel from '../components/workspace/WorkspaceVendorPanel';
+import WorkspaceGuestPanel from '../components/workspace/WorkspaceGuestPanel';
+import WorkspaceTimelinePanel from '../components/workspace/WorkspaceTimelinePanel';
 import moment from 'moment';
 
 const COLUMNS = ['budget', 'venue', 'vendors', 'guests', 'decor', 'timeline', 'done'];
@@ -81,13 +81,13 @@ export default function Workspace() {
 
       setWedding(activeWedding);
 
-      const [allTasks, allComments, allBudget, allVendors, allGuests] = await Promise.all([
-        base44.entities.Task.list('-created_date', 500),
-        base44.entities.Comment.list('-created_date', 1000),
-        base44.entities.BudgetItem.list('-created_date', 200),
-        base44.entities.Vendor.list('-created_date', 100),
-        base44.entities.Guest.list('-created_date', 1000),
-      ]);
+      // const [allTasks, allComments, allBudget, allVendors, allGuests] = await Promise.all([
+      //   base44.entities.Task.list('-created_date', 500),
+      //   base44.entities.Comment.list('-created_date', 1000),
+      //   base44.entities.BudgetItem.list('-created_date', 200),
+      //   base44.entities.Vendor.list('-created_date', 100),
+      //   base44.entities.Guest.list('-created_date', 1000),
+      // ]);
 
       const wTasks = allTasks.filter(t => t.wedding_id === activeWedding.id);
       const taskIds = new Set(wTasks.map(t => t.id));

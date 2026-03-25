@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+
 import { 
   Heart, Plus, Users, Calendar,
   LayoutGrid, ChevronRight, Trash2, MoreHorizontal, Copy, ExternalLink, Mail, Check, Link as LinkIcon
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar as CalendarPicker } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Badge } from '../components/ui/badge';
+import { Card, CardContent } from '../components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
+import { Skeleton } from '../components/ui/skeleton';
+import { Calendar as CalendarPicker } from '../components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { format } from 'date-fns';
-import moment from 'moment';
+import moment from 'moment';    
 
 export default function PlannerDashboard() {
   const navigate = useNavigate();
@@ -40,74 +40,19 @@ export default function PlannerDashboard() {
   });
 
   useEffect(() => {
-    loadData();
+    setLoading(false);
   }, []);
 
-  const loadData = async () => {
-    try {
-      const [allWeddings, allTasks] = await Promise.all([
-        base44.entities.Wedding.list('-created_date', 50),
-        base44.entities.Task.list('-created_date', 500),
-      ]);
-      setWeddings(allWeddings);
-      setTasks(allTasks);
-    } finally {
-      setLoading(false);
-    }
+  const loadData = async () => {};
+
+  const handleCreate = async (e) => { 
+    e.preventDefault(); 
+    setModalOpen(false);
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    if (!formData.couple_names.trim()) return;
-    setSaving(true);
-    try {
-      const data = {
-        couple_names: formData.couple_names,
-        wedding_date: formData.wedding_date ? format(formData.wedding_date, 'yyyy-MM-dd') : null,
-        total_budget: formData.total_budget ? parseFloat(formData.total_budget) : null,
-        venue_name: formData.venue_name || null,
-        theme: formData.theme || null,
-        guest_count: formData.guest_count ? parseInt(formData.guest_count) : null,
-      };
-      const created = await base44.entities.Wedding.create(data);
+  const handleDelete = async (wedding) => {};
 
-      // Seed sample tasks for the new wedding
-      const sampleTasks = [
-        { title: 'Confirm total budget', column: 'budget', priority: 'high', assigned_role: 'planner', order: 0 },
-        { title: 'Allocate venue budget', column: 'budget', priority: 'medium', assigned_role: 'planner', order: 1 },
-        { title: 'Visit venue options', column: 'venue', priority: 'high', assigned_role: 'couple', order: 0 },
-        { title: 'Book venue', column: 'venue', priority: 'high', assigned_role: 'planner', order: 1 },
-        { title: 'Hire photographer', column: 'vendors', priority: 'high', assigned_role: 'planner', order: 0 },
-        { title: 'Confirm florist', column: 'vendors', priority: 'medium', assigned_role: 'planner', order: 1 },
-        { title: 'Finalize guest list', column: 'guests', priority: 'high', assigned_role: 'couple', order: 0 },
-        { title: 'Send invitations', column: 'guests', priority: 'medium', assigned_role: 'planner', order: 1 },
-        { title: 'Choose color theme', column: 'decor', priority: 'medium', assigned_role: 'couple', order: 0 },
-        { title: 'Create wedding day schedule', column: 'timeline', priority: 'high', assigned_role: 'planner', order: 0 },
-      ];
-      await base44.entities.Task.bulkCreate(sampleTasks.map(t => ({ ...t, wedding_id: created.id })));
-
-      setWeddings(prev => [created, ...prev]);
-      setModalOpen(false);
-      setFormData({ couple_names: '', wedding_date: null, total_budget: '', venue_name: '', theme: '', guest_count: '' });
-      navigate(`/Workspace?weddingId=${created.id}`);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async (wedding) => {
-    if (!window.confirm(`Delete "${wedding.couple_names}" wedding? This cannot be undone.`)) return;
-    await base44.entities.Wedding.delete(wedding.id);
-    setWeddings(prev => prev.filter(w => w.id !== wedding.id));
-  };
-
-  const getWeddingStats = (weddingId) => {
-    const wTasks = tasks.filter(t => t.wedding_id === weddingId);
-    return {
-      total: wTasks.length,
-      done: wTasks.filter(t => t.column === 'done').length,
-    };
-  };
+  const getWeddingStats = (weddingId) => ({ total: 0, done: 0 });
 
   const openInviteModal = (wedding) => {
     setInviteModal({ open: true, wedding });
@@ -121,7 +66,7 @@ export default function PlannerDashboard() {
     if (!inviteEmail.trim() || !inviteModal.wedding) return;
     setInviting(true);
     try {
-      await base44.users.inviteUser(inviteEmail.trim(), 'user');
+      
       const link = `${window.location.origin}/Workspace?weddingId=${inviteModal.wedding.id}`;
       setInviteLink(link);
     } finally {

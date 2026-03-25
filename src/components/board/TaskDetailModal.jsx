@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { X, Calendar, User, Paperclip, Send, Trash2, Download, FileText, Image } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { base44 } from '@/api/base44Client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Badge } from '../ui/badge';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+// import { base44 } from '@/api/base44Client';
 import moment from 'moment';
 
 const roleColors = {
@@ -32,17 +32,17 @@ export default function TaskDetailModal({ task, open, onClose, onUpdate, comment
   const [authorName, setAuthorName] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const user = await base44.auth.me();
-        setAuthorName(user.full_name || user.email?.split('@')[0] || 'User');
-      } catch {
-        setAuthorName('User');
-      }
-    };
-    loadUser();
-  }, []);
+  // useEffect(() => {
+  //   const loadUser = async () => {
+  //     try {
+  //       const user = await base44.auth.me();
+  //       setAuthorName(user.full_name || user.email?.split('@')[0] || 'User');
+  //     } catch {
+  //       setAuthorName('User');
+  //     }
+  //   };
+  //   loadUser();
+  // }, []);
 
   const handleSubmitComment = async () => {
     if (!newComment.trim()) return;
@@ -55,20 +55,20 @@ export default function TaskDetailModal({ task, open, onClose, onUpdate, comment
     setNewComment('');
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // const handleFileUpload = async (e) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) return;
 
-    setIsUploading(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      const newAttachments = [...(task.attachments || []), file_url];
-      await onUpdate(task.id, { attachments: newAttachments });
-    } catch (error) {
-      console.error('Upload failed:', error);
-    }
-    setIsUploading(false);
-  };
+  //   setIsUploading(true);
+  //   try {
+  //     const { file_url } = await base44.integrations.Core.UploadFile({ file });
+  //     const newAttachments = [...(task.attachments || []), file_url];
+  //     await onUpdate(task.id, { attachments: newAttachments });
+  //   } catch (error) {
+  //     console.error('Upload failed:', error);
+  //   }
+  //   setIsUploading(false);
+  // };
 
   const handleRemoveAttachment = async (urlToRemove) => {
     const newAttachments = (task.attachments || []).filter(url => url !== urlToRemove);

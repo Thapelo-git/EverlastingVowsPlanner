@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+
 import { Plus, Phone, Mail, Globe, FileText, DollarSign, Pencil, Trash2, MoreHorizontal, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Badge } from '../ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Textarea } from '../ui/textarea';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 const CATEGORIES = [
   'photographer','videographer','florist','caterer','dj','band','cake','makeup','hair','officiant','transportation','rentals','lighting','other'
@@ -45,30 +45,30 @@ export default function WorkspaceVendorPanel({ wedding, vendors, setVendors }) {
     setModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.name.trim() || !form.category) return;
-    setSaving(true);
-    try {
-      const data = { ...form, wedding_id: wedding.id, total_cost: form.total_cost ? parseFloat(form.total_cost) : null, amount_paid: form.amount_paid ? parseFloat(form.amount_paid) : null };
-      if (selected) {
-        await base44.entities.Vendor.update(selected.id, data);
-        setVendors(prev => prev.map(v => v.id === selected.id ? { ...v, ...data } : v));
-      } else {
-        const n = await base44.entities.Vendor.create(data);
-        setVendors(prev => [...prev, n]);
-      }
-      setModalOpen(false);
-    } finally {
-      setSaving(false);
-    }
-  };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!form.name.trim() || !form.category) return;
+  //   setSaving(true);
+  //   try {
+  //     const data = { ...form, wedding_id: wedding.id, total_cost: form.total_cost ? parseFloat(form.total_cost) : null, amount_paid: form.amount_paid ? parseFloat(form.amount_paid) : null };
+  //     if (selected) {
+  //       await base44.entities.Vendor.update(selected.id, data);
+  //       setVendors(prev => prev.map(v => v.id === selected.id ? { ...v, ...data } : v));
+  //     } else {
+  //       const n = await base44.entities.Vendor.create(data);
+  //       setVendors(prev => [...prev, n]);
+  //     }
+  //     setModalOpen(false);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  const handleDelete = async (vendor) => {
-    if (!window.confirm('Delete this vendor?')) return;
-    await base44.entities.Vendor.delete(vendor.id);
-    setVendors(prev => prev.filter(v => v.id !== vendor.id));
-  };
+  // const handleDelete = async (vendor) => {
+  //   if (!window.confirm('Delete this vendor?')) return;
+  //   await base44.entities.Vendor.delete(vendor.id);
+  //   setVendors(prev => prev.filter(v => v.id !== vendor.id));
+  // };
 
   return (
     <div className="p-4 space-y-3">

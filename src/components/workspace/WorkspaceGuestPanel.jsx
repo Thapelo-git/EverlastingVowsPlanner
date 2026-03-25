@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+
 import { Plus, Search, UserCheck, UserX, Clock, Users, Pencil, Trash2, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Badge } from '../ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 const RSVP_STATUSES = [
   { value: 'pending', label: 'Pending', color: 'bg-slate-100 text-slate-600' },
@@ -59,35 +59,35 @@ export default function WorkspaceGuestPanel({ wedding, guests, setGuests }) {
     setModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.name.trim()) return;
-    setSaving(true);
-    try {
-      const data = { ...form, wedding_id: wedding.id, table_number: form.table_number ? parseInt(form.table_number) : null };
-      if (selected) {
-        await base44.entities.Guest.update(selected.id, data);
-        setGuests(prev => prev.map(g => g.id === selected.id ? { ...g, ...data } : g));
-      } else {
-        const n = await base44.entities.Guest.create(data);
-        setGuests(prev => [...prev, n].sort((a, b) => a.name.localeCompare(b.name)));
-      }
-      setModalOpen(false);
-    } finally {
-      setSaving(false);
-    }
-  };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!form.name.trim()) return;
+  //   setSaving(true);
+  //   try {
+  //     const data = { ...form, wedding_id: wedding.id, table_number: form.table_number ? parseInt(form.table_number) : null };
+  //     if (selected) {
+  //       await base44.entities.Guest.update(selected.id, data);
+  //       setGuests(prev => prev.map(g => g.id === selected.id ? { ...g, ...data } : g));
+  //     } else {
+  //       const n = await base44.entities.Guest.create(data);
+  //       setGuests(prev => [...prev, n].sort((a, b) => a.name.localeCompare(b.name)));
+  //     }
+  //     setModalOpen(false);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  const handleDelete = async (guest) => {
-    if (!window.confirm('Remove this guest?')) return;
-    await base44.entities.Guest.delete(guest.id);
-    setGuests(prev => prev.filter(g => g.id !== guest.id));
-  };
+  // const handleDelete = async (guest) => {
+  //   if (!window.confirm('Remove this guest?')) return;
+  //   await base44.entities.Guest.delete(guest.id);
+  //   setGuests(prev => prev.filter(g => g.id !== guest.id));
+  // };
 
-  const handleQuickStatus = async (guest, status) => {
-    await base44.entities.Guest.update(guest.id, { rsvp_status: status });
-    setGuests(prev => prev.map(g => g.id === guest.id ? { ...g, rsvp_status: status } : g));
-  };
+  // const handleQuickStatus = async (guest, status) => {
+  //   await base44.entities.Guest.update(guest.id, { rsvp_status: status });
+  //   setGuests(prev => prev.map(g => g.id === guest.id ? { ...g, rsvp_status: status } : g));
+  // };
 
   return (
     <div className="p-4 space-y-3">

@@ -1,6 +1,6 @@
 import { DollarSign, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Progress } from '../ui/progress';
 
 export default function BudgetWidget({ totalBudget = 0, budgetItems = [] }) {
   const estimated = budgetItems.reduce((sum, item) => sum + (item.estimated_cost || 0), 0);

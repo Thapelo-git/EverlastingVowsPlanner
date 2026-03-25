@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '../utils';
+
 import { 
   ArrowLeft, Plus, Search, UserCheck, UserX, Clock, Users,
   MoreHorizontal, Pencil, Trash2, Mail, Phone, Filter
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Badge } from '../components/ui/badge';
+import { Checkbox } from '../components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
+import { Skeleton } from '../components/ui/skeleton';
 
 const groups = [
   { value: 'bride_family', label: "Bride's Family" },
@@ -60,29 +60,29 @@ export default function Guests() {
   });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
 
-  const loadData = async () => {
-    try {
-      const [weddings, allGuests] = await Promise.all([
-        base44.entities.Wedding.list('-created_date', 1),
-        base44.entities.Guest.list('name', 1000),
-      ]);
+  // const loadData = async () => {
+  //   try {
+  //     const [weddings, allGuests] = await Promise.all([
+  //       base44.entities.Wedding.list('-created_date', 1),
+  //       base44.entities.Guest.list('name', 1000),
+  //     ]);
 
-      const activeWedding = weddings[0];
-      setWedding(activeWedding);
+  //     const activeWedding = weddings[0];
+  //     setWedding(activeWedding);
 
-      if (activeWedding) {
-        setGuests(allGuests.filter(g => g.wedding_id === activeWedding.id));
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (activeWedding) {
+  //       setGuests(allGuests.filter(g => g.wedding_id === activeWedding.id));
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to load data:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const filteredGuests = guests.filter(g => {
     const matchesSearch = g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -133,53 +133,53 @@ export default function Guests() {
     setModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name.trim()) return;
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.name.trim()) return;
 
-    setSaving(true);
-    try {
-      const data = {
-        ...formData,
-        wedding_id: wedding.id,
-        table_number: formData.table_number ? parseInt(formData.table_number) : null,
-      };
+  //   setSaving(true);
+  //   try {
+  //     const data = {
+  //       ...formData,
+  //       wedding_id: wedding.id,
+  //       table_number: formData.table_number ? parseInt(formData.table_number) : null,
+  //     };
 
-      if (selectedGuest) {
-        await base44.entities.Guest.update(selectedGuest.id, data);
-        setGuests(prev => prev.map(g => g.id === selectedGuest.id ? { ...g, ...data } : g));
-      } else {
-        const newGuest = await base44.entities.Guest.create(data);
-        setGuests(prev => [...prev, newGuest].sort((a, b) => a.name.localeCompare(b.name)));
-      }
+  //     if (selectedGuest) {
+  //       await base44.entities.Guest.update(selectedGuest.id, data);
+  //       setGuests(prev => prev.map(g => g.id === selectedGuest.id ? { ...g, ...data } : g));
+  //     } else {
+  //       const newGuest = await base44.entities.Guest.create(data);
+  //       setGuests(prev => [...prev, newGuest].sort((a, b) => a.name.localeCompare(b.name)));
+  //     }
 
-      setModalOpen(false);
-    } catch (error) {
-      console.error('Failed to save guest:', error);
-    } finally {
-      setSaving(false);
-    }
-  };
+  //     setModalOpen(false);
+  //   } catch (error) {
+  //     console.error('Failed to save guest:', error);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  const handleDelete = async (guest) => {
-    if (!window.confirm('Are you sure you want to remove this guest?')) return;
+  // const handleDelete = async (guest) => {
+  //   if (!window.confirm('Are you sure you want to remove this guest?')) return;
     
-    try {
-      await base44.entities.Guest.delete(guest.id);
-      setGuests(prev => prev.filter(g => g.id !== guest.id));
-    } catch (error) {
-      console.error('Failed to delete guest:', error);
-    }
-  };
+  //   try {
+  //     await base44.entities.Guest.delete(guest.id);
+  //     setGuests(prev => prev.filter(g => g.id !== guest.id));
+  //   } catch (error) {
+  //     console.error('Failed to delete guest:', error);
+  //   }
+  // };
 
-  const handleQuickStatusChange = async (guest, newStatus) => {
-    try {
-      await base44.entities.Guest.update(guest.id, { rsvp_status: newStatus });
-      setGuests(prev => prev.map(g => g.id === guest.id ? { ...g, rsvp_status: newStatus } : g));
-    } catch (error) {
-      console.error('Failed to update status:', error);
-    }
-  };
+  // const handleQuickStatusChange = async (guest, newStatus) => {
+  //   try {
+  //     await base44.entities.Guest.update(guest.id, { rsvp_status: newStatus });
+  //     setGuests(prev => prev.map(g => g.id === guest.id ? { ...g, rsvp_status: newStatus } : g));
+  //   } catch (error) {
+  //     console.error('Failed to update status:', error);
+  //   }
+  // };
 
   if (loading) {
     return (

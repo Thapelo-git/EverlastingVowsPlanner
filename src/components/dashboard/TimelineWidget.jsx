@@ -1,5 +1,5 @@
 import { Calendar, Clock, Heart } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import moment from 'moment';
 
 export default function TimelineWidget({ weddingDate, tasks = [] }) {

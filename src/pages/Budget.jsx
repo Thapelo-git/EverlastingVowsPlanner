@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '../utils';
+
 import { 
   ArrowLeft, Plus, DollarSign, PiggyBank, TrendingUp, TrendingDown,
   MoreHorizontal, Pencil, Trash2, CheckCircle2, Circle
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Progress } from '@/components/ui/progress';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
+import { Checkbox } from '../components/ui/checkbox';
+import { Progress } from '../components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
+import { Label } from '../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
+import { Skeleton } from '../components/ui/skeleton';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 const categories = [
@@ -54,28 +54,19 @@ export default function Budget() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    loadData();
+    setLoading(false);
   }, []);
 
-  const loadData = async () => {
-    try {
-      const [weddings, allItems] = await Promise.all([
-        base44.entities.Wedding.list('-created_date', 1),
-        base44.entities.BudgetItem.list('category', 200),
-      ]);
+  const loadData = async () => {};
 
-      const activeWedding = weddings[0];
-      setWedding(activeWedding);
-
-      if (activeWedding) {
-        setBudgetItems(allItems.filter(i => i.wedding_id === activeWedding.id));
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setModalOpen(false);
   };
+
+  const handleDelete = async (item) => {};
+
+  const handleTogglePaid = async (item) => {};
 
   const totalBudget = wedding?.total_budget || 0;
   const estimated = budgetItems.reduce((sum, i) => sum + (i.estimated_cost || 0), 0);
@@ -126,54 +117,54 @@ export default function Budget() {
     setModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.category) return;
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.category) return;
 
-    setSaving(true);
-    try {
-      const data = {
-        ...formData,
-        wedding_id: wedding.id,
-        estimated_cost: formData.estimated_cost ? parseFloat(formData.estimated_cost) : null,
-        actual_cost: formData.actual_cost ? parseFloat(formData.actual_cost) : null,
-      };
+  //   setSaving(true);
+  //   try {
+  //     const data = {
+  //       ...formData,
+  //       wedding_id: wedding.id,
+  //       estimated_cost: formData.estimated_cost ? parseFloat(formData.estimated_cost) : null,
+  //       actual_cost: formData.actual_cost ? parseFloat(formData.actual_cost) : null,
+  //     };
 
-      if (selectedItem) {
-        await base44.entities.BudgetItem.update(selectedItem.id, data);
-        setBudgetItems(prev => prev.map(i => i.id === selectedItem.id ? { ...i, ...data } : i));
-      } else {
-        const newItem = await base44.entities.BudgetItem.create(data);
-        setBudgetItems(prev => [...prev, newItem]);
-      }
+  //     if (selectedItem) {
+  //       await base44.entities.BudgetItem.update(selectedItem.id, data);
+  //       setBudgetItems(prev => prev.map(i => i.id === selectedItem.id ? { ...i, ...data } : i));
+  //     } else {
+  //       const newItem = await base44.entities.BudgetItem.create(data);
+  //       setBudgetItems(prev => [...prev, newItem]);
+  //     }
 
-      setModalOpen(false);
-    } catch (error) {
-      console.error('Failed to save budget item:', error);
-    } finally {
-      setSaving(false);
-    }
-  };
+  //     setModalOpen(false);
+  //   } catch (error) {
+  //     console.error('Failed to save budget item:', error);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  const handleDelete = async (item) => {
-    if (!window.confirm('Are you sure you want to delete this budget item?')) return;
+  // const handleDelete = async (item) => {
+  //   if (!window.confirm('Are you sure you want to delete this budget item?')) return;
     
-    try {
-      await base44.entities.BudgetItem.delete(item.id);
-      setBudgetItems(prev => prev.filter(i => i.id !== item.id));
-    } catch (error) {
-      console.error('Failed to delete item:', error);
-    }
-  };
+  //   try {
+  //     await base44.entities.BudgetItem.delete(item.id);
+  //     setBudgetItems(prev => prev.filter(i => i.id !== item.id));
+  //   } catch (error) {
+  //     console.error('Failed to delete item:', error);
+  //   }
+  // };
 
-  const handleTogglePaid = async (item) => {
-    try {
-      await base44.entities.BudgetItem.update(item.id, { paid: !item.paid });
-      setBudgetItems(prev => prev.map(i => i.id === item.id ? { ...i, paid: !i.paid } : i));
-    } catch (error) {
-      console.error('Failed to update item:', error);
-    }
-  };
+  // const handleTogglePaid = async (item) => {
+  //   try {
+  //     await base44.entities.BudgetItem.update(item.id, { paid: !item.paid });
+  //     setBudgetItems(prev => prev.map(i => i.id === item.id ? { ...i, paid: !i.paid } : i));
+  //   } catch (error) {
+  //     console.error('Failed to update item:', error);
+  //   }
+  // };
 
   if (loading) {
     return (

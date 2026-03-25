@@ -1,6 +1,6 @@
 import { Users, Phone, Mail, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
 
 const statusConfig = {
   pending: { label: 'Pending', color: 'bg-slate-100 text-slate-600', icon: Clock },

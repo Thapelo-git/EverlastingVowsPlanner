@@ -1,6 +1,6 @@
 import { UserCheck, UserX, Users, Clock } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Progress } from '../ui/progress';
 
 export default function GuestWidget({ guests = [], expectedCount = 0 }) {
   const attending = guests.filter(g => g.rsvp_status === 'attending').length;

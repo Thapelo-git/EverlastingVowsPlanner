@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Calendar, User, Paperclip, MessageSquare, MoreHorizontal, GripVertical } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '../ui/dropdown-menu';
 import moment from 'moment';
 
 const priorityColors = {

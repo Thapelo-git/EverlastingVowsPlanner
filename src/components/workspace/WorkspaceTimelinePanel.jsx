@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Calendar, Clock, CheckCircle2, AlertCircle, Circle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '../ui/badge';
 import moment from 'moment';
 
 export default function WorkspaceTimelinePanel({ wedding, tasks }) {

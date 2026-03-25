@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+
 import { Plus, DollarSign, TrendingDown, PiggyBank, AlertTriangle, CheckCircle2, Circle, Pencil, Trash2, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Progress } from '../ui/progress';
+import { Badge } from '../ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 const CATEGORIES = [
   { value: 'venue', label: 'Venue', color: '#8B5CF6' },
@@ -48,39 +48,39 @@ export default function WorkspaceBudgetPanel({ wedding, budgetItems, setBudgetIt
     setModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.category) return;
-    setSaving(true);
-    try {
-      const data = {
-        ...form,
-        wedding_id: wedding.id,
-        estimated_cost: form.estimated_cost ? parseFloat(form.estimated_cost) : null,
-        actual_cost: form.actual_cost ? parseFloat(form.actual_cost) : null,
-      };
-      if (selected) {
-        await base44.entities.BudgetItem.update(selected.id, data);
-        setBudgetItems(prev => prev.map(i => i.id === selected.id ? { ...i, ...data } : i));
-      } else {
-        const n = await base44.entities.BudgetItem.create(data);
-        setBudgetItems(prev => [...prev, n]);
-      }
-      setModalOpen(false);
-    } finally {
-      setSaving(false);
-    }
-  };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!form.category) return;
+  //   setSaving(true);
+  //   try {
+  //     const data = {
+  //       ...form,
+  //       wedding_id: wedding.id,
+  //       estimated_cost: form.estimated_cost ? parseFloat(form.estimated_cost) : null,
+  //       actual_cost: form.actual_cost ? parseFloat(form.actual_cost) : null,
+  //     };
+  //     if (selected) {
+  //       await base44.entities.BudgetItem.update(selected.id, data);
+  //       setBudgetItems(prev => prev.map(i => i.id === selected.id ? { ...i, ...data } : i));
+  //     } else {
+  //       const n = await base44.entities.BudgetItem.create(data);
+  //       setBudgetItems(prev => [...prev, n]);
+  //     }
+  //     setModalOpen(false);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  const handleDelete = async (item) => {
-    await base44.entities.BudgetItem.delete(item.id);
-    setBudgetItems(prev => prev.filter(i => i.id !== item.id));
-  };
+  // const handleDelete = async (item) => {
+  //   await base44.entities.BudgetItem.delete(item.id);
+  //   setBudgetItems(prev => prev.filter(i => i.id !== item.id));
+  // };
 
-  const handleTogglePaid = async (item) => {
-    await base44.entities.BudgetItem.update(item.id, { paid: !item.paid });
-    setBudgetItems(prev => prev.map(i => i.id === item.id ? { ...i, paid: !i.paid } : i));
-  };
+  // const handleTogglePaid = async (item) => {
+  //   await base44.entities.BudgetItem.update(item.id, { paid: !item.paid });
+  //   setBudgetItems(prev => prev.map(i => i.id === item.id ? { ...i, paid: !i.paid } : i));
+  // };
 
   return (
     <div className="p-4 space-y-4">

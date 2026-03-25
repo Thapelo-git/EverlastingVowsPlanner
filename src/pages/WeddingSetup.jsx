@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '../utils';
+
 import { ArrowLeft, Heart, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Calendar } from '../components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -27,60 +27,60 @@ export default function WeddingSetup() {
     guest_count: '',
   });
 
-  useEffect(() => {
-    loadWedding();
-  }, []);
+  // useEffect(() => {
+  //   loadWedding();
+  // }, []);
 
-  const loadWedding = async () => {
-    try {
-      const weddings = await base44.entities.Wedding.list('-created_date', 1);
-      if (weddings.length > 0) {
-        const wedding = weddings[0];
-        setExistingWedding(wedding);
-        setFormData({
-          couple_names: wedding.couple_names || '',
-          wedding_date: wedding.wedding_date ? new Date(wedding.wedding_date) : null,
-          total_budget: wedding.total_budget || '',
-          venue_name: wedding.venue_name || '',
-          theme: wedding.theme || '',
-          guest_count: wedding.guest_count || '',
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load wedding:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const loadWedding = async () => {
+  //   try {
+  //     const weddings = await base44.entities.Wedding.list('-created_date', 1);
+  //     if (weddings.length > 0) {
+  //       const wedding = weddings[0];
+  //       setExistingWedding(wedding);
+  //       setFormData({
+  //         couple_names: wedding.couple_names || '',
+  //         wedding_date: wedding.wedding_date ? new Date(wedding.wedding_date) : null,
+  //         total_budget: wedding.total_budget || '',
+  //         venue_name: wedding.venue_name || '',
+  //         theme: wedding.theme || '',
+  //         guest_count: wedding.guest_count || '',
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to load wedding:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.couple_names.trim()) return;
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.couple_names.trim()) return;
 
-    setSaving(true);
-    try {
-      const data = {
-        couple_names: formData.couple_names,
-        wedding_date: formData.wedding_date ? format(formData.wedding_date, 'yyyy-MM-dd') : null,
-        total_budget: formData.total_budget ? parseFloat(formData.total_budget) : null,
-        venue_name: formData.venue_name || null,
-        theme: formData.theme || null,
-        guest_count: formData.guest_count ? parseInt(formData.guest_count) : null,
-      };
+  //   setSaving(true);
+  //   try {
+  //     const data = {
+  //       couple_names: formData.couple_names,
+  //       wedding_date: formData.wedding_date ? format(formData.wedding_date, 'yyyy-MM-dd') : null,
+  //       total_budget: formData.total_budget ? parseFloat(formData.total_budget) : null,
+  //       venue_name: formData.venue_name || null,
+  //       theme: formData.theme || null,
+  //       guest_count: formData.guest_count ? parseInt(formData.guest_count) : null,
+  //     };
 
-      if (existingWedding) {
-        await base44.entities.Wedding.update(existingWedding.id, data);
-      } else {
-        await base44.entities.Wedding.create(data);
-      }
+  //     if (existingWedding) {
+  //       await base44.entities.Wedding.update(existingWedding.id, data);
+  //     } else {
+  //       await base44.entities.Wedding.create(data);
+  //     }
 
-      navigate(createPageUrl('Dashboard'));
-    } catch (error) {
-      console.error('Failed to save wedding:', error);
-    } finally {
-      setSaving(false);
-    }
-  };
+  //     navigate(createPageUrl('Dashboard'));
+  //   } catch (error) {
+  //     console.error('Failed to save wedding:', error);
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
   if (loading) {
     return (
