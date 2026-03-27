@@ -88,7 +88,7 @@ export default function TaskFormModal({ open, onClose, onSubmit, task, defaultCo
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{task ? 'Edit Task' : 'Create New Task'}</DialogTitle>
         </DialogHeader>

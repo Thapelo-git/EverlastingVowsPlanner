@@ -40,14 +40,50 @@ export default function PlannerDashboard() {
   });
 
   useEffect(() => {
+    loadData();
     setLoading(false);
   }, []);
 
-  const loadData = async () => {};
+  const loadData = async () => {
+    // Read all custom mock weddings from local storage
+    const mockWeddings = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('mock_wedding_')) {
+            try { mockWeddings.push(JSON.parse(localStorage.getItem(key))); } catch(e) {}
+        }
+    }
+    setWeddings(mockWeddings);
+  };
 
   const handleCreate = async (e) => { 
     e.preventDefault(); 
-    setModalOpen(false);
+    setSaving(true);
+    
+    // Simulate network delay
+    setTimeout(() => {
+      const newWedding = {
+        id: Math.random().toString(36).substring(2, 9),
+        ...formData
+      };
+      
+      setWeddings(prev => [...prev, newWedding]);
+      setSaving(false);
+      setModalOpen(false);
+      
+      // Navigate to the board for the new couple using mock data ID
+      window.localStorage.setItem('mock_wedding_' + newWedding.id, JSON.stringify(newWedding));
+      navigate(`/Workspace?weddingId=${newWedding.id}`);
+      
+      setFormData({
+        couple_names: '',
+        wedding_date: null,
+        total_budget: '',
+        venue_name: '',
+        theme: '',
+        guest_count: '',
+      });
+    }, 600);
   };
 
   const handleDelete = async (wedding) => {};

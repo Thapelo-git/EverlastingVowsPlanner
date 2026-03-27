@@ -1,7 +1,7 @@
 import { cn } from './lib/utils';
 
 // Pages that handle their own full layout (no wrapper needed)
-const STANDALONE_PAGES = ['PlannerDashboard', 'Workspace'];
+const STANDALONE_PAGES = ['PlannerDashboard', 'Workspace', 'LandingPage'];
 
 export default function Layout({ children, currentPageName }) {
   // Standalone pages get no wrapper - they handle everything themselves

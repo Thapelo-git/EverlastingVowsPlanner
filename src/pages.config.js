@@ -55,6 +55,7 @@ import Guests from './pages/Guests';
 import Budget from './pages/Budget';
 import PlannerDashboard from './pages/PlannerDashboard.jsx';
 import Workspace from './pages/Workspace';
+import LandingPage from './pages/LandingPage.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -67,10 +68,11 @@ export const PAGES = {
     "Budget": Budget,
     "PlannerDashboard": PlannerDashboard,
     "Workspace": Workspace,
+    "LandingPage": LandingPage,
 }
 
 export const pagesConfig = {
-    mainPage: "PlannerDashboard",
+    mainPage: "LandingPage",
     Pages: PAGES,
     Layout: __Layout,
 };

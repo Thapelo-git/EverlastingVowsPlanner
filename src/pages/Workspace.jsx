@@ -67,11 +67,16 @@ export default function Workspace() {
     try {
       let activeWedding;
       if (weddingId) {
-        const allWeddings = await base44.entities.Wedding.list('-created_date', 50);
-        activeWedding = allWeddings.find(w => w.id === weddingId) || allWeddings[0];
-      } else {
-        const allWeddings = await base44.entities.Wedding.list('-created_date', 1);
-        activeWedding = allWeddings[0];
+        const mockData = window.localStorage.getItem('mock_wedding_' + weddingId);
+        if (mockData) {
+          activeWedding = JSON.parse(mockData);
+        } else {
+          // Fallback if base44 is used
+          try {
+            const allWeddings = await base44.entities.Wedding.list('-created_date', 50);
+            activeWedding = allWeddings.find(w => w.id === weddingId) || allWeddings[0];
+          } catch(e) {}
+        }
       }
 
       if (!activeWedding) {
@@ -81,13 +86,12 @@ export default function Workspace() {
 
       setWedding(activeWedding);
 
-      // const [allTasks, allComments, allBudget, allVendors, allGuests] = await Promise.all([
-      //   base44.entities.Task.list('-created_date', 500),
-      //   base44.entities.Comment.list('-created_date', 1000),
-      //   base44.entities.BudgetItem.list('-created_date', 200),
-      //   base44.entities.Vendor.list('-created_date', 100),
-      //   base44.entities.Guest.list('-created_date', 1000),
-      // ]);
+      // Using mock local storage data for related entities
+      const allTasks = JSON.parse(window.localStorage.getItem('mock_tasks_' + activeWedding.id) || '[]');
+      const allComments = JSON.parse(window.localStorage.getItem('mock_comments_' + activeWedding.id) || '[]');
+      const allBudget = JSON.parse(window.localStorage.getItem('mock_budget_' + activeWedding.id) || '[]');
+      const allVendors = JSON.parse(window.localStorage.getItem('mock_vendors_' + activeWedding.id) || '[]');
+      const allGuests = JSON.parse(window.localStorage.getItem('mock_guests_' + activeWedding.id) || '[]');
 
       const wTasks = allTasks.filter(t => t.wedding_id === activeWedding.id);
       const taskIds = new Set(wTasks.map(t => t.id));
@@ -129,10 +133,9 @@ export default function Workspace() {
     );
     setTasks(updatedTasks);
 
-    await base44.entities.Task.update(draggableId, {
-      column: destination.droppableId,
-      order: destination.index,
-    });
+    if (wedding) {
+      window.localStorage.setItem('mock_tasks_' + wedding.id, JSON.stringify(updatedTasks));
+    }
   };
 
   const handleAddTask = (columnId) => {
@@ -146,41 +149,57 @@ export default function Workspace() {
 
   const handleDeleteTask = async (task) => {
     if (!window.confirm('Delete this task?')) return;
-    await base44.entities.Task.delete(task.id);
-    setTasks(prev => prev.filter(t => t.id !== task.id));
-    const taskComments = comments.filter(c => c.task_id === task.id);
-    for (const c of taskComments) await base44.entities.Comment.delete(c.id);
-    setComments(prev => prev.filter(c => c.task_id !== task.id));
+    
+    const newTasks = tasks.filter(t => t.id !== task.id);
+    setTasks(newTasks);
+    
+    if (wedding) {
+      window.localStorage.setItem('mock_tasks_' + wedding.id, JSON.stringify(newTasks));
+    }
+    
+    const newComments = comments.filter(c => c.task_id !== task.id);
+    setComments(newComments);
+    if (wedding) {
+      window.localStorage.setItem('mock_comments_' + wedding.id, JSON.stringify(newComments));
+    }
   };
 
   const handleTaskSubmit = async (formData) => {
     if (selectedTask) {
-      await base44.entities.Task.update(selectedTask.id, formData);
-      setTasks(prev => prev.map(t => t.id === selectedTask.id ? { ...t, ...formData } : t));
+      const newTasks = tasks.map(t => t.id === selectedTask.id ? { ...t, ...formData } : t);
+      setTasks(newTasks);
+      if (wedding) window.localStorage.setItem('mock_tasks_' + wedding.id, JSON.stringify(newTasks));
     } else {
-      const newTask = await base44.entities.Task.create({
+      const newTask = {
+        id: Math.random().toString(36).substring(2, 9),
         ...formData,
         wedding_id: wedding.id,
         order: tasks.filter(t => t.column === formData.column).length,
-      });
-      setTasks(prev => [...prev, newTask]);
+      };
+      const newTasks = [...tasks, newTask];
+      setTasks(newTasks);
+      if (wedding) window.localStorage.setItem('mock_tasks_' + wedding.id, JSON.stringify(newTasks));
     }
   };
 
   const handleTaskUpdate = async (taskId, data) => {
-    await base44.entities.Task.update(taskId, data);
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...data } : t));
+    const newTasks = tasks.map(t => t.id === taskId ? { ...t, ...data } : t);
+    setTasks(newTasks);
     if (selectedTask?.id === taskId) setSelectedTask(prev => ({ ...prev, ...data }));
+    if (wedding) window.localStorage.setItem('mock_tasks_' + wedding.id, JSON.stringify(newTasks));
   };
 
   const handleAddComment = async (commentData) => {
-    const newComment = await base44.entities.Comment.create(commentData);
-    setComments(prev => [...prev, newComment]);
+    const newComment = { id: Math.random().toString(), ...commentData };
+    const newComments = [...comments, newComment];
+    setComments(newComments);
+    if (wedding) window.localStorage.setItem('mock_comments_' + wedding.id, JSON.stringify(newComments));
   };
 
   const handleDeleteComment = async (commentId) => {
-    await base44.entities.Comment.delete(commentId);
-    setComments(prev => prev.filter(c => c.id !== commentId));
+    const newComments = comments.filter(c => c.id !== commentId);
+    setComments(newComments);
+    if (wedding) window.localStorage.setItem('mock_comments_' + wedding.id, JSON.stringify(newComments));
   };
 
   const openTab = (tabId) => {
